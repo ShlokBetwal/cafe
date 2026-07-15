@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Website | Premium Aesthetic Dining</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific Home Page Adjustment Adjustments */
+        .hero-video {
+            position: relative;
+            height: 75vh;
+            background-color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-video video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.45;
+            /* Enhances text contrast overlay dramatically */
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 20px;
+            color: #FFFFFF;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 18px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            margin-bottom: 25px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-overlay h1 {
+            font-family: var(--font-heading);
+            font-size: 54px;
+            line-height: 1.2;
+            font-weight: 800;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-overlay p {
+            font-size: 17px;
+            max-width: 600px;
+            margin: 20px auto 35px auto;
+            opacity: 0.95;
+            line-height: 1.6;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--cream-bg);
+            color: var(--text-main);
+            padding: 16px 36px;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            background: var(--cafe-main);
+            color: white;
+            box-shadow: 0 12px 25px rgba(140, 145, 108, 0.4);
+        }
+
+        /* Footer Alignment Overrides */
+        .footer-grid-layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 60px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .hero-overlay h1 {
+                font-size: 36px;
+            }
+
+            .hero-overlay p {
+                font-size: 14px;
+            }
+
+            .footer-grid-layout {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links a {
+                margin-left: 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <span onclick="window.location.href='index.html'" style="cursor:pointer;">Cafe Website</span>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="active-nav" style="color: var(--text-main); margin-right: 20px;">Home</a>
+            <a href="menu.html?token=t_qR9x7P2m" style="margin-right: 20px;">Explore Menu</a>
+            <a href="#gallery" style="margin-right: 20px;">Gallery</a>
+            <a href="#story">Our Story</a>
+        </nav>
+    </header>
+
+    <section class="hero-video">
+        <video autoplay loop muted playsinline>
+            <source src="cafe images/hero_background.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay">
+            <span class="hero-badge">Est. 2026</span>
+            <h1>Crafting Moments,<br>One Sip at a Time.</h1>
+            <p>An aesthetic sanctuary fusing traditional stone-ground Japanese flavors with artisanal Western comforting
+                dishes.</p>
+            <a href="menu.html?token=t_qR9x7P2m" class="cta-btn">Order to Your Table &rarr;</a>
+        </div>
+    </section>
+
+    <div class="section-title-block">
+        <span class="sub-title">Handcrafted Offerings</span>
+        <h2>Our Signature Highlights</h2>
+        <div class="title-divider"></div>
+    </div>
+
+    <section class="menu-preview">
+        <div class="preview-grid">
+
+            <!-- 🔐 FIXED: Updated to point to secure token instead of ?table=1 -->
+            <div class="preview-card card-pizza"
+                onclick="window.location.href='menu.html?token=t_qR9x7P2m#section-pizza'">
+                <div class="card-text-wrapper">
+                    <h3>Pizza</h3>
+                    <div class="card-line"></div>
+                    <span class="view-more-btn">View More</span>
+                </div>
+            </div>
+
+            <!-- 🔐 FIXED: Updated to point to secure token instead of ?table=1 -->
+            <div class="preview-card card-burgers"
+                onclick="window.location.href='menu.html?token=t_qR9x7P2m#section-burgers'">
+                <div class="card-text-wrapper">
+                    <h3>Burgers</h3>
+                    <div class="card-line"></div>
+                    <span class="view-more-btn">View More</span>
+                </div>
+            </div>
+
+            <!-- 🔐 FIXED: Updated to point to secure token instead of ?table=1 -->
+            <div class="preview-card card-pasta"
+                onclick="window.location.href='menu.html?token=t_qR9x7P2m#section-pasta'">
+                <div class="card-text-wrapper">
+                    <h3>Pasta</h3>
+                    <div class="card-line"></div>
+                    <span class="view-more-btn">View More</span>
+                </div>
+            </div>
+
+            <!-- 🔐 FIXED: Updated to point to secure token instead of ?table=1 -->
+            <div class="preview-card card-mocktails"
+                onclick="window.location.href='menu.html?token=t_qR9x7P2m#section-mocktails'">
+                <div class="card-text-wrapper">
+                    <h3>Mocktails</h3>
+                    <div class="card-line"></div>
+                    <span class="view-more-btn">View More</span>
+                </div>
+            </div>
+
+            <!-- 🔐 FIXED: Updated to point to secure token instead of ?table=1 -->
+            <div class="preview-card card-explore explore-more"
+                onclick="window.location.href='menu.html?token=t_qR9x7P2m'">
+                <div class="card-text-wrapper">
+                    <h3>Explore More</h3>
+                    <div class="card-line"></div>
+                    <span class="view-more-btn">&gt;&gt;&gt;</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="section-title-block" id="gallery">
+        <span class="sub-title">Aesthetic Spaces</span>
+        <h2>Cafe Ambience & Vibe</h2>
+        <div class="title-divider"></div>
+    </div>
+
+    <section class="media-gallery">
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="cafe images/ambience1.jpg" alt="Cafe Corner Vibe"
+                    onerror="this.src='https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500';">
+            </div>
+            <div class="gallery-item">
+                <img src="cafe images/ambience2.jpg" alt="Aesthetic Seating"
+                    onerror="this.src='https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=500';">
+            </div>
+            <div class="gallery-item">
+                <img src="cafe images/ambience3.jpg" alt="Brewing Station"
+                    onerror="this.src='https://images.unsplash.com/photo-1498804103079-a6351b050096?w=500';">
+            </div>
+            <div class="gallery-item">
+                <img src="cafe images/ambience4.jpg" alt="Matcha Preparation"
+                    onerror="this.src='https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500';">
+            </div>
+        </div>
+    </section>
+
+    <footer class="about-footer" id="story">
+        <div class="footer-grid-layout">
+            <div class="about-story">
+                <h2>Our Story</h2>
+                <p>Born from a passion for minimalist design and deep, authentic flavors, our cafe brings together
+                    premium stone-ground Japanese matcha infusions with artisan comforting dishes. We provide an
+                    aesthetic sanctuary where every detail—from our warm earthy textures to our handcrafted menus—is
+                    designed to help you slow down, relax, and savor your morning brew or evening gathering.</p>
+                <div class="cafe-address" style="margin-top: 25px;">
+                    <p>📍 Visit Us: Near Iscon Cross Road, Ahmedabad, Gujarat</p>
+                </div>
+            </div>
+            <div class="social-links">
+                <h3>Follow Our Journey</h3>
+                <p style="color: #B3BBB3; font-size: 14px; margin-bottom: 15px;">Keep up with our latest seasonal
+                    updates, special drop events, and aesthetics.</p>
+                <div class="social-icons">
+                    <a href="https://instagram.com" target="_blank" style="margin-right: 15px;"><img
+                            src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"
+                            style="width: 32px; height: 32px; filter: invert(1);"></a>
+                    <a href="https://facebook.com" target="_blank"><img
+                            src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"
+                            style="width: 32px; height: 32px; filter: invert(1);"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2026 Cafe Website. All Rights Reserved. Crafted for fine dining.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
