@@ -186,8 +186,7 @@
 
         // 🔐 FIXED: Fetches clean structural data objects from MySQL via API route
         function loadIncomingOrders() {
-            fetch('get_orders.php')
-                .then(res => res.json())
+fetch('https://app-11f5d019-304b-41ab-b1f6-9ffe40a4e2de.cleverapps.io/get_orders.php')                .then(res => res.json())
                 .then(ordersData => {
                     const feedContainer = document.getElementById('kitchenOrdersFeed');
                     if (!feedContainer) return;
