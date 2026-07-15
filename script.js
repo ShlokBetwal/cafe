@@ -329,13 +329,7 @@ function placeFinalOrder() {
     };
 
     // 📡 Stream payload asynchronously straight to our MySQL backend handler script
-    fetch('save_order.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderPayload)
-    })
+    fetch('https://app-11f5d019-304b-41ab-b1f6-9ffe40a4e2de.cleverapps.io/save_order.php', {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
