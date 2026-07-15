@@ -1,4 +1,13 @@
 <?php
+// 📡 INTERNAL CLEVER CLOUD ENVIRONMENT VARIABLES
+$servername = isset($_ENV["MYSQL_ADDON_HOST"]) ? $_ENV["MYSQL_ADDON_HOST"] : "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
+$username   = isset($_ENV["MYSQL_ADDON_USER"]) ? $_ENV["MYSQL_ADDON_USER"] : "usbzg45wtej4xap";
+$password   = isset($_ENV["MYSQL_ADDON_PASSWORD"]) ? $_ENV["MYSQL_ADDON_PASSWORD"] : "PASTE_YOUR_ACTUAL_PASSWORD_HERE"; 
+$dbname     = isset($_ENV["MYSQL_ADDON_DB"]) ? $_ENV["MYSQL_ADDON_DB"] : "bvhujbzywochddf20hir";
+$port       = isset($_ENV["MYSQL_ADDON_PORT"]) ? (int)$_ENV["MYSQL_ADDON_PORT"] : 3306;
+
+// Connect to server
+$conn = new mysqli($servername, $username, $password, $dbname, $port);<?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
