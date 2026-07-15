@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Interactive Table Menu | Cafe Website</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="menu-body">
+
+    <header class="navbar">
+        <div class="logo">
+            <span onclick="window.location.href='index.html'" style="cursor:pointer;">Cafe Website</span>
+        </div>
+        <div class="table-tag" id="tableDisplay">Table ID: Loading Context...</div>
+        <nav class="nav-links">
+            <a href="index.html">Back Home</a>
+        </nav>
+    </header>
+
+    <section class="promo-banner-section">
+        <div class="promo-banner-content">
+            <span class="promo-subtitle">Limited Time Offer</span>
+            <h2 class="promo-title">BONUS PLUS COMBO</h2>
+            <p class="promo-desc">Buy 1 Classic Pizza + 1 Mocktail, Save ₹100 instantly on your table bill!</p>
+            <button class="promo-action-btn"
+                onclick="scrollToCategory('section-pizza', document.querySelector('.sidebar-categories li'))">Claim This
+                Offer</button>
+        </div>
+    </section>
+
+    <div class="menu-container">
+        <aside class="sidebar-categories">
+            <h3>Menu Categories</h3>
+            <ul>
+                <li class="nav-item active-cat" onclick="scrollToCategory('section-pizza', this)">🍕 1. Pizza</li>
+                <li class="nav-item" onclick="scrollToCategory('section-burgers', this)">🍔 2. Burgers</li>
+                <li class="nav-item" onclick="scrollToCategory('section-pasta', this)">🍝 3. Pasta</li>
+                <li class="nav-item" onclick="scrollToCategory('section-mocktails', this)">🍹 4. Mocktails</li>
+                <li class="nav-item" onclick="scrollToCategory('section-fries', this)">🍟 5. Fries</li>
+                <li class="nav-item" onclick="scrollToCategory('section-sandwich', this)">🥪 6. Sandwich</li>
+                <li class="nav-item" onclick="scrollToCategory('section-cold-beverages', this)">🍵 7. Cold Beverages
+                </li>
+                <li class="nav-item" onclick="scrollToCategory('section-dessert', this)">🍰 8. Dessert</li>
+                <li class="nav-item" onclick="scrollToCategory('section-cold-drinks', this)">🥤 9. Cold Drinks</li>
+            </ul>
+        </aside>
+
+        <main class="products-area" id="productsDisplay">
+        </main>
+    </div>
+
+    <div class="floating-cart" id="floatingCart" onclick="toggleCartModal()">
+        <span class="cart-icon">🛒</span> Table Cart <span id="cartCount" class="cart-badge-num">0</span>
+    </div>
+
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-content glass-modal">
+            <span class="close-btn" onclick="toggleCartModal()">&times;</span>
+            <h2>Table Order Summary</h2>
+            <div class="title-divider-short"></div>
+            <div id="cartItemsList" class="cart-items-scroll"></div>
+            <hr class="bill-line">
+            <div class="bill-breakdown" id="billBreakdown"></div>
+            <button class="order-btn" onclick="placeFinalOrder()">Send to Kitchen & Get Receipt</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="thankYouModal">
+        <div class="modal-content thank-you-box premium-popup">
+            <div class="success-icon-check">🍽️</div>
+            <h2>Order Confirmed!</h2>
+            <div class="title-divider-short" style="margin: 10px auto 20px auto;"></div>
+
+            <p class="popup-story-text"
+                style="font-size: 15px; line-height: 1.6; margin-bottom: 12px; font-weight: 500;">
+                Your order has been successfully sent to our kitchen.
+            </p>
+            <p class="popup-story-text" style="font-size: 15px; line-height: 1.6; margin-bottom: 15px; color: #555;">
+                Our chefs have started preparing your food with care.
+            </p>
+
+            <p class="highlight-text"
+                style="color: #3A4D39; background: #EDF1EC; font-size: 14px; padding: 12px; border-radius: 10px; font-weight: 700; margin: 15px 0;">
+                ⏳ Estimated Preparation Time: 15–20 minutes
+            </p>
+
+            <p style="font-size: 14px; line-height: 1.5; color: #666; margin-bottom: 20px;">
+                💡 Please remain at your table. We'll bring your order to you as soon as it's ready.
+            </p>
+
+            <p style="font-size: 14px; font-weight: 600; color: var(--cafe-deep); margin-bottom: 15px;">
+                Need anything else? You can place another order anytime.
+            </p>
+
+            <button class="close-btn-classic" onclick="closeThankYou()"
+                style="background-color: var(--cafe-main); padding: 12px 30px; border-radius: 30px; font-weight: 700; width: auto;">
+                Thanks for Ordering! 😊
+            </button>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>

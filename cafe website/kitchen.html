@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen KDS & Billing Panel</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .kitchen-body {
+            background-color: #F4F1EA;
+            padding: 30px;
+        }
+
+        .kitchen-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media screen and (max-width: 900px) {
+            .kitchen-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(149, 113, 79, 0.15);
+        }
+
+        .panel-card h2 {
+            color: #3A4D39;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-card-row {
+            background: #F9F6F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #8C916C;
+            position: relative;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #2A2421;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #C7AF94;
+            padding-bottom: 5px;
+        }
+
+        .item-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .bill-editor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .bill-editor-table th,
+        .bill-editor-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #EADED0;
+        }
+
+        .qty-input {
+            width: 50px;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #C7AF94;
+            text-align: center;
+        }
+
+        .discount-section {
+            margin-top: 20px;
+            background: #EADED0;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .discount-input {
+            width: 80px;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #C7AF94;
+        }
+
+        .btn-action {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-select {
+            background-color: #8C916C;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #E76F51;
+            color: white;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printableInvoice,
+            #printableInvoice * {
+                visibility: visible;
+            }
+
+            #printableInvoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="kitchen-body">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1300px; margin: 0 auto 25px auto;"
+        class="no-print">
+        <h1 style="font-family: 'Playfair Display', serif; color: #3A4D39;">Cafe Website Dashboard</h1>
+        <button class="btn-action btn-select" onclick="loadIncomingOrders()">🔄 Refresh Orders</button>
+    </div>
+
+    <div class="kitchen-container">
+        <div class="panel-card">
+            <h2>Live Active Orders <span style="font-size: 14px; color: #777;">(MySQL Database Feed)</span></h2>
+            <div id="kitchenOrdersFeed"></div>
+        </div>
+
+        <div class="panel-card" id="printableInvoice">
+            <h2>Invoice Billing Generator</h2>
+            <div id="billingActiveWorkspace">
+                <p style="color: gray; text-align: center; padding: 40px;">Select a live table order card from the left
+                    feed to process the invoice bill.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentlySelectedTable = null;
+        let activeWorkingCart = {};
+        let appliedDiscountPercentage = 0;
+
+        // 🔐 FIXED: Fetches clean structural data objects from MySQL via API route
+        function loadIncomingOrders() {
+            fetch('get_orders.php')
+                .then(res => res.json())
+                .then(ordersData => {
+                    const feedContainer = document.getElementById('kitchenOrdersFeed');
+                    if (!feedContainer) return;
+                    feedContainer.innerHTML = "";
+
+                    if (!ordersData || ordersData.length === 0) {
+                        feedContainer.innerHTML = `<p style="color: gray; text-align: center; padding: 40px;">No incoming orders inside MySQL.</p>`;
+                        return;
+                    }
+
+                    ordersData.forEach(order => {
+                        const itemsString = JSON.stringify(order.items).replace(/"/g, '&quot;');
+
+                        let orderCardHTML = `
+                            <div class="order-card-row">
+                                <div class="order-header">
+                                    <span>📋 MySQL Order ID #${order.id} (Table ${order.table_identifier})</span>
+                                    <button class="btn-action btn-select no-print" onclick="selectTableForBilling('${order.table_identifier}', '${itemsString}')">Process Bill</button>
+                                </div>
+                        `;
+
+                        for (let itemId in order.items) {
+                            const product = menuDatabase.find(p => p.id === itemId);
+                            if (product) {
+                                orderCardHTML += `
+                                    <div class="item-line">
+                                        <span>${product.name} <strong>x${order.items[itemId]}</strong></span>
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        orderCardHTML += `
+                                <div style="margin-top: 10px; text-align: right;" class="no-print">
+                                    <button class="btn-action btn-delete" onclick="clearTableOrder('${order.id}')">Complete / Clear</button>
+                                </div>
+                            </div>
+                        `;
+                        feedContainer.innerHTML += orderCardHTML;
+                    });
+                })
+                .catch(err => console.error("Error fetching database rows:", err));
+        }
+
+        function selectTableForBilling(tableId, itemsStr) {
+            currentlySelectedTable = tableId;
+            try {
+                activeWorkingCart = JSON.parse(itemsStr.replace(/&quot;/g, '"')) || {};
+            } catch (e) {
+                console.error("Parsing error:", e);
+                activeWorkingCart = {};
+            }
+            appliedDiscountPercentage = 0;
+            renderInvoiceWorkspace();
+        }
+
+        function renderInvoiceWorkspace() {
+            const workspace = document.getElementById('billingActiveWorkspace');
+            let itemRowsHTML = "";
+            let rawSubtotal = 0;
+
+            for (let itemId in activeWorkingCart) {
+                const product = menuDatabase.find(p => p.id === itemId);
+                if (!product) continue;
+
+                const qty = activeWorkingCart[itemId];
+                const lineTotal = product.price * qty;
+                rawSubtotal += lineTotal;
+
+                itemRowsHTML += `
+                    <tr>
+                        <td><strong>${product.name}</strong></td>
+                        <td>₹${product.price}</td>
+                        <td>
+                            <input type="number" class="qty-input no-print" min="0" value="${qty}" onchange="updateItemQuantity('${itemId}', this.value)">
+                            <span class="visible-print-only" style="display:none;">${qty}</span>
+                        </td>
+                        <td><strong>₹${lineTotal}</strong></td>
+                        <td class="no-print">
+                            <button style="background:none; border:none; color:#E76F51; cursor:pointer; font-weight:bold;" onclick="updateItemQuantity('${itemId}', 0)">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            if (rawSubtotal === 0) {
+                workspace.innerHTML = `<p style="color: gray; text-align: center; padding: 40px;">No items remaining in this bill layout wrapper.</p>`;
+                return;
+            }
+
+            const discountAmount = rawSubtotal * (appliedDiscountPercentage / 100);
+            const subtotalAfterDiscount = rawSubtotal - discountAmount;
+            const cgst = subtotalAfterDiscount * 0.025;
+            const sgst = subtotalAfterDiscount * 0.025;
+            const absoluteGrandTotal = Math.round(subtotalAfterDiscount + cgst + sgst);
+
+            workspace.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <h3>INVOICE RECEIPT: TABLE ${currentlySelectedTable}</h3>
+                    <p style="font-size: 12px; color: #666;">Date/Time: ${new Date().toLocaleString()}</p>
+                </div>
+                
+                <table class="bill-editor-table">
+                    <thead>
+                        <tr>
+                            <th>Item Details</th>
+                            <th>Rate</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                            <th class="no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemRowsHTML}
+                    </tbody>
+                </table>
+
+                <div class="discount-section no-print">
+                    <span>Apply Custom Discount Counter (%):</span>
+                    <input type="number" class="discount-input" id="discountInputVal" min="0" max="100" value="${appliedDiscountPercentage}">
+                    <button class="btn-action btn-select" onclick="applyDiscount()">Apply</button>
+                </div>
+
+                <div style="margin-top: 20px; border-top: 2px dashed #C7AF94; padding-top: 15px; width: 100%;">
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:4px;"><span>Subtotal:</span><span>₹${rawSubtotal.toFixed(2)}</span></div>
+                    ${discountAmount > 0 ? `<div style="display:flex; justify-content:space-between; font-size:14px; color:#E76F51; margin-bottom:4px;"><span>Discount (${appliedDiscountPercentage}%):</span><span>-₹${discountAmount.toFixed(2)}</span></div>` : ''}
+                    <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:4px;"><span>CGST (2.5%):</span><span>₹${cgst.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;"><span>SGST (2.5%):</span><span>₹${sgst.toFixed(2)}</span></div>
+                    <hr style="border:none; border-top: 1px solid #C7AF94; margin: 10px 0;">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; font-size:22px; color:#3A4D39;">
+                        <span>Grand Total:</span><span>₹${absoluteGrandTotal}.00</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;" class="no-print">
+                    <button class="btn-action btn-select" style="padding: 12px; font-size: 14px;" onclick="window.print()">🖨️ Option 1: Print Bill</button>
+                    <button class="btn-action" style="padding: 12px; font-size: 14px; background-color: #95714F; color: white;" onclick="saveInvoiceAsTextFile(${absoluteGrandTotal}, ${rawSubtotal}, ${discountAmount}, ${cgst}, ${sgst})">💾 Option 2: Save Bill (KB)</button>
+                </div>
+            `;
+        }
+
+        function saveInvoiceAsTextFile(grandTotal, subtotal, discount, cgst, sgst) {
+            let textBill = "";
+            textBill += "========================================\n";
+            textBill += "           SWASTIK SOLAR CAFE           \n";
+            textBill += "========================================\n";
+            textBill += `Table Reference: Table ${currentlySelectedTable}\n`;
+            textBill += `Date / Time    : ${new Date().toLocaleString()}\n`;
+            textBill += "----------------------------------------\n";
+            textBill += "Item Name             Qty   Rate   Total\n";
+            textBill += "----------------------------------------\n";
+
+            for (let itemId in activeWorkingCart) {
+                const product = menuDatabase.find(p => p.id === itemId);
+                if (!product) continue;
+                const qty = activeWorkingCart[itemId];
+                const total = product.price * qty;
+
+                let namePadded = product.name.substring(0, 20).padEnd(21, ' ');
+                let qtyPadded = qty.toString().padEnd(5, ' ');
+                let ratePadded = ("₹" + product.price).padEnd(7, ' ');
+
+                textBill += `${namePadded}${qtyPadded}${ratePadded}₹${total}\n`;
+            }
+
+            textBill += "========================================\n";
+            textBill += `Subtotal          : ₹${subtotal.toFixed(2)}\n`;
+            if (discount > 0) {
+                textBill += `Discount (${appliedDiscountPercentage}%)   : -₹${discount.toFixed(2)}\n`;
+            }
+            textBill += `CGST (2.5%)       : ₹${cgst.toFixed(2)}\n`;
+            textBill += `SGST (2.5%)       : ₹${sgst.toFixed(2)}\n`;
+            textBill += "----------------------------------------\n";
+            textBill += `GRAND TOTAL       : ₹${grandTotal}.00\n`;
+            textBill += "========================================\n";
+            textBill += "       Thank you for visiting!          \n";
+            textBill += "========================================\n";
+
+            const blobStream = new Blob([textBill], { type: "text/plain;charset=utf-8" });
+            const dynamicLink = document.createElement("a");
+            dynamicLink.download = `Bill_Table_${currentlySelectedTable}_${Date.now()}.txt`;
+            dynamicLink.href = URL.createObjectURL(blobStream);
+            dynamicLink.style.display = "none";
+            document.body.appendChild(dynamicLink);
+            dynamicLink.click();
+            document.body.removeChild(dynamicLink);
+        }
+
+        function updateItemQuantity(itemId, newQty) {
+            newQty = parseInt(newQty);
+            if (isNaN(newQty) || newQty <= 0) {
+                delete activeWorkingCart[itemId];
+            } else {
+                activeWorkingCart[itemId] = newQty;
+            }
+            renderInvoiceWorkspace();
+        }
+
+        function applyDiscount() {
+            const val = parseInt(document.getElementById('discountInputVal').value);
+            appliedDiscountPercentage = isNaN(val) ? 0 : Math.min(Math.max(val, 0), 100);
+            renderInvoiceWorkspace();
+        }
+
+        function clearTableOrder(orderId) {
+            if (confirm(`Clear Order #${orderId} from feed completely?`)) {
+                fetch('complete_order.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `id=${orderId}`
+                })
+                    .then(() => {
+                        currentlySelectedTable = null;
+                        activeWorkingCart = {};
+                        document.getElementById('billingActiveWorkspace').innerHTML = `<p style="color: gray; text-align: center; padding: 40px;">Select a live table order card from the left feed to process the invoice bill.</p>`;
+                        loadIncomingOrders();
+                    })
+                    .catch(err => console.error("Error updating status:", err));
+            }
+        }
+
+        // Auto-refresh feed loop cleanly every 4 seconds to catch new database logs
+        document.addEventListener("DOMContentLoaded", () => {
+            loadIncomingOrders();
+            setInterval(loadIncomingOrders, 4000);
+        });
+    </script>
+</body>
+
+</html>
