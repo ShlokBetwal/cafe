@@ -1,51 +1,44 @@
 <?php
-// 📡 INTERNAL CLEVER CLOUD ENVIRONMENT VARIABLES
-$servername = isset($_ENV["MYSQL_ADDON_HOST"]) ? $_ENV["MYSQL_ADDON_HOST"] : "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
-$username   = isset($_ENV["MYSQL_ADDON_USER"]) ? $_ENV["MYSQL_ADDON_USER"] : "usbzg45wtej4xap";
-$password   = isset($_ENV["MYSQL_ADDON_PASSWORD"]) ? $_ENV["MYSQL_ADDON_PASSWORD"] : "PASTE_YOUR_ACTUAL_PASSWORD_HERE"; 
-$dbname     = isset($_ENV["MYSQL_ADDON_DB"]) ? $_ENV["MYSQL_ADDON_DB"] : "bvhujbzywochddf20hir";
-$port       = isset($_ENV["MYSQL_ADDON_PORT"]) ? (int)$_ENV["MYSQL_ADDON_PORT"] : 3306;
-
-// Connect to server
-$conn = new mysqli($servername, $username, $password, $dbname, $port);<?php
+// 🔓 ALLOW FRONTEND TO CONNECT CLEANLY
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
 
-// 1. Establish connection details to your XAMPP MySQL Database
+// 📡 CONNECTION CREDS
 $servername = "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
 $username = "usbzg45wtej4xap";
-$password = "XfZ3BBYK48HJGHcqJITO"; 
+$password = "YOUR_CLEVER_CLOUD_PASSWORD"; // <-- MAKE SURE YOUR ACTUAL PASSWORD IS HERE
 $dbname = "bvhujbzywochddf20hir";
 $port = 3306;
 
-// Establishes connection using the cloud port layout
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
-// Check if the connection failed
+// 🔍 CHECK CONNECTION
 if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+    http_response_code(500);
+    echo json_encode(["error" => "Database connection failed: " . $conn->connect_error]);
     exit();
 }
 
-// 2. Capture the JSON order packet sent from your menu webpage
-$incomingData = json_decode(file_get_contents("php://input"), true);
+// 🛒 PROCESS INCOMING ORDER
+$table = $_POST['table_identifier'] ?? '';
+$items = $_POST['items_json'] ?? '';
+$total = $_POST['grand_total'] ?? 0;
 
-if (!empty($incomingData['table']) && !empty($incomingData['items'])) {
-    $table = $conn->real_escape_string($incomingData['table']);
-    $items = $conn->real_escape_string(json_encode($incomingData['items']));
-    $total = isset($incomingData['total']) ? (float) $incomingData['total'] : 0.00;
-
-    // 3. Securely insert the data into your new customer_orders table
-    $sql = "INSERT INTO customer_orders (table_identifier, items_json, grand_total) VALUES ('$table', '$items', '$total')";
-
-    if ($conn->query($sql) === TRUE) {
-        echo json_encode(["status" => "success", "message" => "Order saved successfully!"]);
+if (!empty($table) && !empty($items)) {
+    $stmt = $conn->prepare("INSERT INTO customer_orders (table_identifier, items_json, grand_total) VALUES (?, ?, ?)");
+    $stmt->bind_param("ssd", $table, $items, $total);
+    
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success"]);
     } else {
-        echo json_encode(["status" => "error", "message" => "SQL Error: " . $conn->error]);
+        http_response_code(500);
+        echo json_encode(["error" => "SQL execution failed: " . $stmt->error]);
     }
+    $stmt->close();
 } else {
-    echo json_encode(["status" => "error", "message" => "Incomplete order data received."]);
+    http_response_code(400);
+    echo json_encode(["error" => "Missing required order data fields."]);
 }
 
 $conn->close();
