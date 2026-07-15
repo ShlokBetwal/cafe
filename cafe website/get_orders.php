@@ -1,12 +1,14 @@
 <?php
 header("Content-Type: application/json");
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cafe_db";
+$servername = "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
+$username = "usbzg45wtej4xap";
+$password = "XfZ3BBYK48HJGHcqJITO"; 
+$dbname = "bvhujbzywochddf20hir";
+$port = 3306;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Establishes connection using the cloud port layout
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
 
 if ($conn->connect_error) {
     echo json_encode([]);
