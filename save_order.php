@@ -7,7 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 // 📡 CONNECTION CREDS
 $servername = "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
 $username = "usbzg45wtej4xap";
-$password = "YOUR_CLEVER_CLOUD_PASSWORD"; // <-- MAKE SURE YOUR ACTUAL PASSWORD IS HERE
+$password = "XfZ3BBYK48HJGHcqJITO"; // <-- MAKE SURE YOUR ACTUAL PASSWORD IS HERE
 $dbname = "bvhujbzywochddf20hir";
 $port = 3306;
 
