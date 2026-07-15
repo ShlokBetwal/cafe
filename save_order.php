@@ -4,12 +4,14 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
 // 1. Establish connection details to your XAMPP MySQL Database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "cafe_db"; // Using your active database name
+$servername = "bvhujbzywochddf20hir-mysql.services.clever-cloud.com";
+$username = "usbzg45wtej4xap";
+$password = "XfZ3BBYK48HJGHcqJITO"; 
+$dbname = "bvhujbzywochddf20hir";
+$port = 3306;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Establishes connection using the cloud port layout
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
 
 // Check if the connection failed
 if ($conn->connect_error) {
